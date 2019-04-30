@@ -1,6 +1,16 @@
-cmake_minimum_required(VERSION 3.13)
-project(erovitionV2 C)
+cmake_minimum_required(VERSION 3.14)
+project(eroV3)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(erovitionV2 eurovision.c eurovision.h list.h map.h map.c)
+include_directories(.)
+
+add_executable(eroV3
+        .gitattributes
+        CMakeLists.txt
+        eurovision.c
+        eurovision.h
+        list.h
+        map.c
+        map.h
+        set.h)
