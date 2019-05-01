@@ -4,8 +4,11 @@
 #include "list.h"
 #include "map.h"
 
+
+
+
 /**
-* Eurovition management program
+* Eurovision management program
 
 **
 * The following functions are available:
@@ -94,4 +97,4 @@ List eurovisionRunAudienceFavorite(Eurovision eurovision);
 List eurovisionRunGetFriendlyStates(Eurovision eurovision);
 
 
-#elif  EUROVISION_H_
+#endif /* EUROVISION_H_ */

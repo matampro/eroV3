@@ -5,9 +5,11 @@
 #include <assert.h>
 #include <string.h>
 
+
 #define NUMBER_OF_RESULTS 10
 #define MAX_NUMBER_OF_WINNERS 10
 #define TOTAL_PRECENT 100
+
 List makeSortedListByMapData(Map map);
 void printResult(List list);
 int place[MAX_NUMBER_OF_WINNERS] = {12, 10, 8, 7, 6, 5, 4, 3, 2, 1};
@@ -383,102 +385,110 @@ List eurovisionRunContest(Eurovision eurovision, int audiencePrecent) {
     int number_of_voted_states = MAX_NUMBER_OF_WINNERS;
     Map winnersMap = mapCreate(copyVoteDataElement, copyKeyElement, freeVoteDataElement, freeKeyElement,
                                compareKeyElements);      // we count the score here
-    if (winnersMap == NULL) {
+    if (winnersMap == NULL){
         return NULL;
     }
-    MAP_FOREACH(int*, iterator, eurovision->state) {
-        int initData = 0;
-        MapResult result = mapPut(winnersMap, eurovision->state, &initData); //we set the map with all states in the eurovision
+    int initData = 0;
+    KeyElement keyElement = mapGetFirst(eurovision->state);
+    MapResult result = mapPut(winnersMap, keyElement,&initData); //we set first state
+    if (result == MAP_OUT_OF_MEMORY){
+        return NULL;
+    }
+    while (mapGetNext(eurovision->state) != NULL){
+        keyElement = mapGetFirst(eurovision->state);
+        result = mapPut(winnersMap, keyElement,&initData); //we set rest of the states
         if (result == MAP_OUT_OF_MEMORY){
             return NULL;
         }
     }
-    MAP_FOREACH(int*, iterator, eurovision->state) {
+    MAP_FOREACH(int *,iterator,eurovision->state){
         StateData stateData = mapGet(eurovision->state,iterator);
         if(stateData == NULL){
-            return EUROVISION_NULL_ARGUMENT;
+            return NULL;
         }
         Map citizenVote = stateData->citizenVote;
-        MapResult result1 = mapRemove(citizenVote, &stateId);
-        if(result1 == MAP_NULL_ARGUMENT){
-            return EUROVISION_NULL_ARGUMENT;
-        }
-        ListResult current_list = makeSortedListByMapData(eurovision->state // ->stateData->cityzenVote);
+        List current_list = NULL;
+        current_list = makeSortedListByMapData(citizenVote);
         if (current_list == NULL){
             return NULL;
         }
-        ListResult list_size = listGetSize(current_list);
-        if (list_size == NULL){
+        int list_size = listGetSize(current_list);
+        if (list_size == -1){
             continue;
         }
         if (list_size < MAX_NUMBER_OF_WINNERS){
             number_of_voted_states = list_size;
         }
-        for (int i = 0 , current_state = listGetFirst(current_list); i < number_of_voted_states; i++, current_state = listGetNext(current_list)) {
-            MapResult result = mapPut(winnersMap, current_state, winnersMap->data + (place[i] * audiencePrecent / TOTAL_PRECENT));
+        ListElement current_state = NULL;
+        int i = 0;
+        for (current_state = listGetFirst(current_list);
+                i < number_of_voted_states; i++, current_state = listGetNext(current_list)) {
+            result = mapPut(winnersMap, current_state,
+                    mapGet(winnersMap, current_state) + (place[i] * audiencePrecent / TOTAL_PRECENT));
             // ( int place[NUMBER_OF_WINNERS] = (12, 10, 8, 7, 6, 5, 4, 3, 2, 1) )
-            if (result == NULL){
+            if (result == MAP_OUT_OF_MEMORY){
                 return NULL;
             }
         }
     }
     MAP_FOREACH(int*, iterator, eurovision->judge){
-        // check that judge didnt vote for wrong state. if so remove judge
+        JudgeData judgeData = NULL;
+        judgeData = mapGet(eurovision->judge, iterator);
         for (int i = 0; i < MAX_NUMBER_OF_WINNERS; i++) {
-            if (!mapContains(winnersMap, eurovision->judge->judgeData->result[i]) {
+            if (!mapContains(winnersMap, &judgeData->judgeResults[i])){
+                eurovisionRemoveJudge(eurovision, *(int*)iterator);
                 return NULL;
             }
-            MapResult result = mapPut(winnersMap, eurovision->judge->keyElement, winners_map->data + place[i] * (TOTAL_PRECENT - audiencePrecent) / TOTAL_PRECENT);
-            if (return == NULL){
+            result = mapPut(winnersMap, &judgeData->judgeResults[i],
+                    mapGet(winnersMap, &judgeData->judgeResults[i]) +
+                    ((place[i] * (TOTAL_PRECENT - audiencePrecent)) / TOTAL_PRECENT));
+            if (result == MAP_OUT_OF_MEMORY){
                 return NULL;
             }
         }
     }
-    ListResult winnersList = makeSortedListByMapData(winnersMap);
+    List winnersList = makeSortedListByMapData(winnersMap);
     if (winnersList == NULL){
         return NULL;
     }
-    MapResult result = printResult(winnersList);
-    if (result == NULL){
-        return NULL;
-    }
+    printResult(winnersList);
 }
 
 List makeSortedListByMapData(Map map){
-    ListResult list = listCreate(copyKeyElement, freeKeyElement);
+    List list = listCreate(copyKeyElement, freeKeyElement);
     if (list == NULL) {
         return NULL;
     }
-    MAP_FOREACH(int, iterator, map) {
+    MAP_FOREACH(int*, iterator, map) {
         if (listGetSize(list) == 0) {                   // this is the first element in the list
-            ListResult result = listInsertFirst(map->keyElement);
-            if (result == NULL) {
+            ListResult result = listInsertFirst(list, mapGet(map, iterator));
+            if (result == LIST_OUT_OF_MEMORY) {
                 return NULL;
             }
         }
         else{                                                   //this is not the first element. we need to find its place in list
             bool inserted = 0;
-            for(int next_key_in_list = listGetFirst(list) = listGetNext(list); next_key_in_list == NULL; next_key_in_list = listGetNext(list)){
-                if (map->data > mapGet(map, next_key_in_list) {
+            for(ListElement next_key_in_list = listGetFirst(list) ; next_key_in_list == NULL; next_key_in_list = listGetNext(list)){
+                if (mapGet(map, next_key_in_list) < mapGet(map, iterator)) {
                     inserted = 1;
-                    ListResult result = listInsertBeforeCurrent(map->keyElement);
-                    if (result == NULL) {
+                    ListResult result = listInsertBeforeCurrent(list, iterator);
+                    if (result == LIST_OUT_OF_MEMORY) {
                         return NULL;
                     }
                 }
-                        else if (map->data == next_key_in_list) {
+                else if (mapGet(map, next_key_in_list) == mapGet(map, iterator)) {
                     inserted = 1;
-                    if (map->keyElement < next_key_in_list) {
-                        listInsertBeforeCurrent(map->mapKeyElement);
-                        if (result == NULL) {
+                    if (*(int*)next_key_in_list < *(int*)iterator) {
+                        ListResult result = listInsertBeforeCurrent(list, iterator);
+                        if (result == LIST_OUT_OF_MEMORY) {
                             return NULL;
                         }
                     }
                 }
             }
             if (inserted == 0){
-                listInsertAfterCurrent(map->mapKeyElement);
-                if (result == NULL) {
+                ListResult result = listInsertAfterCurrent(list, iterator);
+                if (result == LIST_OUT_OF_MEMORY) {
                     return NULL;
                 }
             }
@@ -504,53 +514,61 @@ void printResult(List list) {
     }
 }
 
-List eurovisionRunAudienceFavorite(eurovision) {
-    number_of_voted_states = MAX_NUMBER_OF_WINNERS;
-
+List eurovisionRunAudienceFavorite(Eurovision eurovision){
+    int number_of_voted_states = MAX_NUMBER_OF_WINNERS;
     Map winnersMap = mapCreate(copyVoteDataElement, copyKeyElement, freeVoteDataElement, freeKeyElement,
                                compareKeyElements);      // we count the score here
     if (winnersMap == NULL) {
         return NULL;
     }
-    MAP_FOREACH(int*, iterator, eurovision->state) {
-        int initData = 0;
-        MapResult result = mapPut(winners_map, map->keyElement, &initData); //we set the map with all states in the eurovision
+    int initData = 0;
+    KeyElement keyElement = mapGetFirst(eurovision->state);
+    MapResult result = mapPut(winnersMap, keyElement,&initData); //we set first state
+    if (result == MAP_OUT_OF_MEMORY){
+        return NULL;
+    }
+    while (mapGetNext(eurovision->state) != NULL){
+        keyElement = mapGetFirst(eurovision->state);
+        result = mapPut(winnersMap, keyElement,&initData); //we set rest of the states
         if (result == MAP_OUT_OF_MEMORY){
             return NULL;
         }
     }
-    MAP_FOREACH(int*, iterator, eurovision->state) {
-        ListResult current_list = makeSortedListByMapData(eurovision->state->stateData->cityzenVote);
+    MAP_FOREACH(int *,iterator,eurovision->state){
+        StateData stateData = mapGet(eurovision->state,iterator);
+        if(stateData == NULL){
+            return NULL;
+        }
+        Map citizenVote = stateData->citizenVote;
+        List current_list = NULL;
+        current_list = makeSortedListByMapData(citizenVote);
         if (current_list == NULL){
             return NULL;
         }
-        ListResult list_size = listGetSize(current_list);
-        if (list_size == NULL){
+        int list_size = listGetSize(current_list);
+        if (list_size == -1){
             continue;
         }
-        if (list_size < NUMBER_OF_WINNERS){
+        if (list_size < MAX_NUMBER_OF_WINNERS){
             number_of_voted_states = list_size;
         }
-        for (int i = 0; i < number_of_voted_states; i++) {
-            MapResult result = mapPut(winners_map, current_list[i], winners_map->data + (place[i]));
+        ListElement current_state = NULL;
+        int i = 0;
+        for (current_state = listGetFirst(current_list);
+             i < number_of_voted_states; i++, current_state = listGetNext(current_list)) {
+            result = mapPut(winnersMap, current_state, mapGet(winnersMap, current_state) + place[i]);
             // ( int place[NUMBER_OF_WINNERS] = (12, 10, 8, 7, 6, 5, 4, 3, 2, 1) )
-            if (return == NULL){
+            if (result == MAP_OUT_OF_MEMORY){
                 return NULL;
             }
         }
     }
-    ListResult winnersList = makeSortedListByMapData(winnersMap);
+    List winnersList = makeSortedListByMapData(winnersMap);
     if (winnersList == NULL){
         return NULL;
     }
-    MapResult result = printList(winnersList);
-    if (result == NULL){
-        return NULL;
-    }
-
-}
+    printResult(winnersList);
 
 List eurovisionRunGetFriendlyStates(Eurovision eurovision){
 
 }
-

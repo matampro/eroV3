@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+E:/Documents/studies/technion/semester 4/CLion/eroV3/eurovision.c
+stdio.h
+-
+eurovision.h
+E:/Documents/studies/technion/semester 4/CLion/eroV3/eurovision.h
+stdlib.h
+-
+stdbool.h
+-
+assert.h
+-
+string.h
+-
+
+E:/Documents/studies/technion/semester 4/CLion/eroV3/eurovision.h
+list.h
+E:/Documents/studies/technion/semester 4/CLion/eroV3/list.h
+map.h
+E:/Documents/studies/technion/semester 4/CLion/eroV3/map.h
+
+E:/Documents/studies/technion/semester 4/CLion/eroV3/list.h
+stdbool.h
+-
+
+E:/Documents/studies/technion/semester 4/CLion/eroV3/map.c
+stdio.h
+-
+map.h
+E:/Documents/studies/technion/semester 4/CLion/eroV3/map.h
+stdlib.h
+-
+memory.h
+-
+
+E:/Documents/studies/technion/semester 4/CLion/eroV3/map.h
+stdbool.h
+-
+
