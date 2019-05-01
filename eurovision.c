@@ -9,6 +9,11 @@
 #define NUMBER_OF_RESULTS 10
 #define MAX_NUMBER_OF_WINNERS 10
 #define TOTAL_PRECENT 100
+<<<<<<< HEAD
+=======
+#define FIRST_ROW 0
+#define SECEND_ROW 1
+>>>>>>> 37d91d593eda829fb913dc7bac78c997a14a162c
 
 List makeSortedListByMapData(Map map);
 void printResult(List list);
@@ -251,10 +256,6 @@ EurovisionResult eurovisionRemoveState(Eurovision eurovision, int stateId){
             if(result1 == MAP_NULL_ARGUMENT){
                 return EUROVISION_NULL_ARGUMENT;
             }
-        }
-        MapResult result2 = mapRemove(eurovision->state, &stateId);
-        if(result2 == MAP_NULL_ARGUMENT){
-            return EUROVISION_NULL_ARGUMENT;
         }
     }
 }
@@ -569,6 +570,53 @@ List eurovisionRunAudienceFavorite(Eurovision eurovision){
     }
     printResult(winnersList);
 
-List eurovisionRunGetFriendlyStates(Eurovision eurovision){
+List eurovisionRunGetFriendlyStates(Eurovision eurovision) {
+    if (eurovision == NULL) {
+        return NULL;
+    }
+    int numState = 0;
+    numState = mapGetSize(eurovision->state);
+    if (numState > 0) {
+        int friendlyState[][numState] = {{0}};
+        for (int i = 0; i < numState; i++) {
+            int curStateId = *(int *) mapGetFirst(eurovision->state);
+            friendlyState[FIRST_ROW][i] = curStateId;
+        }
+        MAP_FOREACH(int *, iter, eurovision->state) {
+            StateData stateData = mapGet(eurovision->state, iter);
+            if (stateData == NULL) {
+                return NULL;
+            }
+            ListResult sortedList = listSort((List)stateData->citizenVote, compareKeyElements);  ///???
+            if (sortedList != LIST_SUCCESS) {
+                return NULL;
+            }
+            KeyElement favoriteState = listGetFirst((List)stateData->citizenVote);
+            if (favoriteState = NULL) {
+                return NULL;
+            } else {
+                for (int j = 0; j < numState; j++) {
+                    if (friendlyState[FIRST_ROW][j] == *(int *)iter) {
+                        friendlyState[SECEND_ROW][j] = *(int *)favoriteState;
+                    }
+                }
+
+<<<<<<< HEAD
+}
+=======
+            }
+        }
+        for(int i=0; i <=(numState/2) ; i++){
+            int firstChoice = friendlyState[SECEND_ROW][i];
+            for(int j=0; j< numState ;j++){
+                if((friendlyState[FIRST_ROW][j] == firstChoice) &&
+                                                        (friendlyState[SECEND_ROW][j] == friendlyState[FIRST_ROW][i])){
+
+                }
+            }
+        }
+
+    }
 
 }
+>>>>>>> 37d91d593eda829fb913dc7bac78c997a14a162c

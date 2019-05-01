@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 E:/Documents/studies/technion/semester 4/CLion/eroV3/cmake-build-debug/CMakeFiles/erovitionV2.dir
 E:/Documents/studies/technion/semester 4/CLion/eroV3/cmake-build-debug/CMakeFiles/edit_cache.dir
 E:/Documents/studies/technion/semester 4/CLion/eroV3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+=======
+C:/Users/Ayala/Documents/GitHub/Eurovisin/eroV3/cmake-build-debug/CMakeFiles/eroV3.dir
+C:/Users/Ayala/Documents/GitHub/Eurovisin/eroV3/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Ayala/Documents/GitHub/Eurovisin/eroV3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+>>>>>>> 37d91d593eda829fb913dc7bac78c997a14a162c

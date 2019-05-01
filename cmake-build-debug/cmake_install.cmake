@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 # Install script for directory: E:/Documents/studies/technion/semester 4/CLion/eroV3
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/erovitionV2")
+=======
+# Install script for directory: C:/Users/Ayala/Documents/GitHub/Eurovisin/eroV3
+
+# Set the install prefix
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/eroV3")
+>>>>>>> 37d91d593eda829fb913dc7bac78c997a14a162c
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +48,9 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
+<<<<<<< HEAD
 file(WRITE "E:/Documents/studies/technion/semester 4/CLion/eroV3/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+=======
+file(WRITE "C:/Users/Ayala/Documents/GitHub/Eurovisin/eroV3/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+>>>>>>> 37d91d593eda829fb913dc7bac78c997a14a162c
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
